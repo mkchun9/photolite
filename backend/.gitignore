@@ -1,0 +1,26 @@
+# compiled output
+dist/
+
+# dependencies
+node_modules/
+
+# environment variables
+.env
+.env.local
+
+# uploads directory
+uploads/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# test coverage
+coverage/
+
+# debug
+npm-debug.log*
+pnpm-debug.log*

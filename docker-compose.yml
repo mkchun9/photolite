@@ -1,0 +1,93 @@
+services:
+  # ============================================
+  # PostgreSQL 데이터베이스
+  # ============================================
+  db:
+    image: postgres:16-alpine
+    container_name: photolite-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: photolite
+      POSTGRES_PASSWORD: photolite_password
+      POSTGRES_DB: photolite
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U photolite -d photolite"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ============================================
+  # NestJS 백엔드
+  # ============================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: photolite-backend
+    restart: unless-stopped
+    expose:
+      - "3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: photolite
+      DB_PASSWORD: photolite_password
+      DB_DATABASE: photolite
+      PORT: 3001
+      NODE_ENV: production
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE: 15728640
+      THROTTLE_TTL: 60
+      THROTTLE_LIMIT: 100
+    volumes:
+      - uploads:/app/uploads
+
+  # ============================================
+  # Next.js 프론트엔드
+  # ============================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://backend:3001
+    container_name: photolite-frontend
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3001
+
+  # ============================================
+  # nginx 리버스 프록시
+  # ============================================
+  nginx:
+    image: nginx:alpine
+    container_name: photolite-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+# ============================================
+# 볼륨 정의 (데이터 영속성)
+# ============================================
+volumes:
+  pgdata:
+    driver: local
+  uploads:
+    driver: local
