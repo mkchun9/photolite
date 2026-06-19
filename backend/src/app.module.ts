@@ -27,7 +27,7 @@ import { Photo } from './modules/photo/entities/photo.entity';
         password: configService.get<string>('DB_PASSWORD', 'photolite_password'),
         database: configService.get<string>('DB_DATABASE', 'photolite'),
         entities: [Photo],
-        synchronize: configService.get<string>('NODE_ENV') === 'development',
+        synchronize: configService.get<string>('DB_SYNC', 'false') === 'true',
         logging: configService.get<string>('NODE_ENV') === 'development',
       }),
     }),

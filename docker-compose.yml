@@ -7,15 +7,15 @@ services:
     container_name: photolite-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: photolite
-      POSTGRES_PASSWORD: photolite_password
-      POSTGRES_DB: photolite
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U photolite -d photolite"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -36,17 +36,18 @@ services:
       db:
         condition: service_healthy
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USERNAME: photolite
-      DB_PASSWORD: photolite_password
-      DB_DATABASE: photolite
-      PORT: 3001
-      NODE_ENV: production
-      UPLOAD_DIR: /app/uploads
-      MAX_FILE_SIZE: 15728640
-      THROTTLE_TTL: 60
-      THROTTLE_LIMIT: 100
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      PORT: ${PORT:-3001}
+      NODE_ENV: ${NODE_ENV:-production}
+      UPLOAD_DIR: ${UPLOAD_DIR:-/app/uploads}
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE:-15728640}
+      THROTTLE_TTL: ${THROTTLE_TTL:-60}
+      THROTTLE_LIMIT: ${THROTTLE_LIMIT:-100}
+      DB_SYNC: "${DB_SYNC:-true}"
     volumes:
       - uploads:/app/uploads
 
@@ -58,7 +59,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://backend:3001
+        NEXT_PUBLIC_API_URL: 
     container_name: photolite-frontend
     restart: unless-stopped
     expose:
@@ -66,7 +67,7 @@ services:
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: http://backend:3001
+      NEXT_PUBLIC_API_URL: 
 
   # ============================================
   # nginx 리버스 프록시
