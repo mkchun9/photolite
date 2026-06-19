@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Loader2, RefreshCw, BarChart3 } from "lucide-react";
+import { ArrowLeft, Loader2, RefreshCw, BarChart3, Images } from "lucide-react";
 import Link from "next/link";
 import { useGallery, GalleryImage } from "@/hooks/useGallery";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
@@ -29,62 +29,70 @@ export default function GalleryPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              홈으로
+              홈
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">갤러리</h1>
+              <div className="flex items-center gap-2">
+                <Images className="w-5 h-5 text-indigo-500" />
+                <h1 className="text-2xl font-bold text-gray-900">갤러리</h1>
+              </div>
               {status === "success" && pagination.totalCount > 0 && (
-                <p className="text-sm text-gray-500">
-                  전체 {pagination.totalCount}장
+                <p className="text-sm text-gray-400 mt-0.5">
+                  전체 {pagination.totalCount}장의 최적화된 사진
                 </p>
               )}
             </div>
           </div>
 
-          {/* 새로고침 버튼 */}
+          {/* 액션 버튼 */}
           <div className="flex items-center gap-2">
             <Link
               href="/statistics"
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:text-indigo-600 shadow-sm transition-colors"
             >
               <BarChart3 className="w-4 h-4" />
-              통계
+              <span className="hidden sm:inline">통계</span>
             </Link>
             <button
               type="button"
               onClick={refresh}
               disabled={status === "loading"}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:text-indigo-600 disabled:opacity-50 shadow-sm transition-colors"
               aria-label="갤러리 새로고침"
             >
               <RefreshCw
                 className={`w-4 h-4 ${status === "loading" ? "animate-spin" : ""}`}
               />
-              새로고침
+              <span className="hidden sm:inline">새로고침</span>
             </button>
           </div>
         </header>
 
         {/* 로딩 상태 */}
         {status === "loading" && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="p-4 bg-indigo-50 rounded-full mb-4">
+              <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+            </div>
             <p className="text-sm text-gray-500">갤러리를 불러오는 중...</p>
           </div>
         )}
 
         {/* 에러 상태 */}
         {status === "error" && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center max-w-md">
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-8 text-center max-w-md shadow-sm">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-xl">⚠️</span>
+              </div>
               <p className="text-sm text-red-700 mb-4">{errorMessage}</p>
               <button
                 type="button"
                 onClick={refresh}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+                className="px-5 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors shadow-sm"
               >
                 다시 시도
               </button>

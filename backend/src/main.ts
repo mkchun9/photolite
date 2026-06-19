@@ -38,8 +38,10 @@ async function bootstrap() {
   // 전역 API 접두사 설정 전에 등록하여 /uploads 경로가 /api prefix를 받지 않도록 함
   app.use('/uploads', express.static(UPLOADS_DIR));
 
-  // 전역 API 접두사 설정
-  app.setGlobalPrefix('api');
+  // 전역 API 접두사 설정 (/uploads 경로는 제외하여 ThumbnailController가 직접 처리)
+  app.setGlobalPrefix('api', {
+    exclude: ['uploads/(.*)'],
+  });
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port);
