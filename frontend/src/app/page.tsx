@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Images, BarChart3, Sparkles, Shield, Zap } from "lucide-react";
+import { Images, BarChart3, Sparkles, Shield, Zap, CalendarClock } from "lucide-react";
 import { UploadZone } from "@/components/upload/UploadZone";
 
 export default function Home() {
@@ -57,6 +57,13 @@ export default function Home() {
           >
             <BarChart3 className="w-4 h-4" />
             절약 통계
+          </Link>
+          <Link
+            href="/schedule"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:text-indigo-600 shadow-sm transition-all hover:-translate-y-0.5"
+          >
+            <CalendarClock className="w-4 h-4" />
+            업무 일정 관리
           </Link>
         </nav>
       </div>

@@ -5,7 +5,12 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PhotoModule } from './modules/photo/photo.module';
+import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { Photo } from './modules/photo/entities/photo.entity';
+import { Task } from './modules/scheduler/entities/task.entity';
+import { FixedBlock } from './modules/scheduler/entities/fixed-block.entity';
+import { ScheduleAllocation } from './modules/scheduler/entities/schedule-allocation.entity';
+import { SchedulerSettings } from './modules/scheduler/entities/scheduler-settings.entity';
 
 @Module({
   imports: [
@@ -26,7 +31,7 @@ import { Photo } from './modules/photo/entities/photo.entity';
         username: configService.get<string>('DB_USERNAME', 'photolite'),
         password: configService.get<string>('DB_PASSWORD', 'photolite_password'),
         database: configService.get<string>('DB_DATABASE', 'photolite'),
-        entities: [Photo],
+        entities: [Photo, Task, FixedBlock, ScheduleAllocation, SchedulerSettings],
         synchronize: configService.get<string>('DB_SYNC', 'false') === 'true',
         logging: configService.get<string>('NODE_ENV') === 'development',
       }),
@@ -48,6 +53,9 @@ import { Photo } from './modules/photo/entities/photo.entity';
 
     // Photo 모듈
     PhotoModule,
+
+    // Scheduler 모듈 (SmartScheduler - 업무 우선순위 자동 관리)
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

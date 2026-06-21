@@ -48,6 +48,7 @@ services:
       THROTTLE_TTL: ${THROTTLE_TTL:-60}
       THROTTLE_LIMIT: ${THROTTLE_LIMIT:-100}
       DB_SYNC: "${DB_SYNC:-true}"
+      TZ: ${TZ:-Asia/Seoul}
     volumes:
       - uploads:/app/uploads
 
